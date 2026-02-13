@@ -114,7 +114,8 @@
         #noBtn {
             background: #e0e0e0;
             color: #666;
-            position: relative;
+            position: fixed;
+            transition: none !important;
         }
 
         .celebration {
@@ -124,34 +125,127 @@
 
         .celebration.show {
             display: block;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s ease, bounce 0.6s ease;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-20px) scale(0.8);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
             }
         }
 
         .celebration h2 {
             color: #ff1744;
-            font-size: 2em;
+            font-size: 2.5em;
             margin-bottom: 15px;
+            animation: pulse 1s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .celebration p {
             color: #666;
-            font-size: 1.2em;
+            font-size: 1.3em;
+            margin: 15px 0;
         }
 
         .emoji {
-            font-size: 3em;
+            font-size: 4em;
             margin: 20px 0;
+            animation: rotate 2s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% {
+                transform: rotate(-10deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 30px;
+            z-index: 9999;
+        }
+
+        @keyframes sparkleAnimation {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(360deg);
+            }
+        }
+
+        /* Firework effect */
+        .firework {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes fireworkExplosion {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        .celebration-image {
+            animation: celebrationPop 0.8s ease;
+            border: 5px solid #ff1744;
+        }
+
+        @keyframes celebrationPop {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -184,9 +278,10 @@
 
         <div id="celebrationSection" class="celebration">
             <div class="emoji">🎉💕🎊</div>
-            <h2>Yay! You said Yes!</h2>
-            <p>I'm so happy! 💖</p>
-            <div class="emoji">😊❤️😍</div>
+            <h2>YAAAAY! 🎉</h2>
+            <p>I'm so excited and happy!</p>
+            <p>This is the best day ever! 💖</p>
+            <div class="emoji">😍❤️✨</div>
         </div>
     </div>
 
@@ -195,23 +290,157 @@
         const yesBtn = document.getElementById('yesBtn');
         const questionSection = document.getElementById('questionSection');
         const celebrationSection = document.getElementById('celebrationSection');
+        const valentineImage = document.getElementById('valentineImage');
 
-        // Move "No" button on hover
-        noBtn.addEventListener('mouseenter', function() {
-            const container = document.querySelector('.button-container');
-            const containerRect = container.getBoundingClientRect();
+        // Function to move No button away from cursor
+        function moveNoButton(e) {
+            const btn = noBtn.getBoundingClientRect();
+            const btnCenterX = btn.left + btn.width / 2;
+            const btnCenterY = btn.top + btn.height / 2;
             
-            // Get random position within a reasonable range
-            const maxX = window.innerWidth - 200;
-            const maxY = window.innerHeight - 100;
+            // Calculate distance from cursor
+            const distX = e.clientX - btnCenterX;
+            const distY = e.clientY - btnCenterY;
+            const distance = Math.sqrt(distX * distX + distY * distY);
             
-            const randomX = Math.random() * (maxX - 100) + 50;
-            const randomY = Math.random() * (maxY - 100) + 50;
-            
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
+            // If cursor is within 150px, move the button away
+            if (distance < 150) {
+                const angle = Math.atan2(distY, distX);
+                const moveDistance = 150 - distance + 100;
+                
+                let newX = btnCenterX - Math.cos(angle) * moveDistance;
+                let newY = btnCenterY - Math.sin(angle) * moveDistance;
+                
+                // Keep button within viewport
+                newX = Math.max(100, Math.min(window.innerWidth - 100, newX));
+                newY = Math.max(50, Math.min(window.innerHeight - 50, newY));
+                
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
+            }
+        }
+
+        // Set initial position for No button
+        function setInitialNoPosition() {
+            const containerRect = document.querySelector('.button-container').getBoundingClientRect();
+            noBtn.style.left = (containerRect.right - 100) + 'px';
+            noBtn.style.top = containerRect.top + 'px';
+        }
+
+        // Initialize No button position
+        setTimeout(setInitialNoPosition, 100);
+
+        // Track mouse movement globally
+        document.addEventListener('mousemove', moveNoButton);
+
+        // Also handle mouseenter on the button itself
+        noBtn.addEventListener('mouseenter', function(e) {
+            moveNoButton(e);
         });
 
-        // Handle "Yes" click
-        yesBtn.addEventListener('click', func
+        // Create sparkles
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.textContent = ['✨', '⭐', '💫', '🌟'][Math.floor(Math.random() * 4)];
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.animation = 'sparkleAnimation 1s ease-out forwards';
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+
+        // Create fireworks
+        function createFirework(x, y) {
+            const colors = ['#ff1744', '#ff6b9d', '#ffc3d7', '#ffeb3b', '#4caf50', '#2196f3'];
+            
+            for (let i = 0; i < 30; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+                firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const angle = (Math.PI * 2 * i) / 30;
+                const velocity = 100 + Math.random() * 100;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                firework.style.setProperty('--tx', tx + 'px');
+                firework.style.setProperty('--ty', ty + 'px');
+                firework.style.animation = 'fireworkExplosion 1s ease-out forwards';
+                
+                document.body.appendChild(firework);
+                setTimeout(() => firework.remove(), 1000);
+            }
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.textContent = ['💖', '💕', '💗', '💓', '✨', '⭐', '🌟', '🎉', '🎊'][Math.floor(Math.random() * 9)];
+            confetti.style.position = 'fixed';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-50px';
+            confetti.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            confetti.style.zIndex = '9999';
+            confetti.style.pointerEvents = 'none';
+            
+            document.body.appendChild(confetti);
+            
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 3000 + 2000,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+            
+            animation.onfinish = () => confetti.remove();
+        }
+
+        // Handle "Yes" click with massive celebration
+        yesBtn.addEventListener('click', function(e) {
+            // Remove mouse tracking for No button
+            document.removeEventListener('mousemove', moveNoButton);
+            
+            questionSection.style.display = 'none';
+            celebrationSection.classList.add('show');
+            valentineImage.classList.add('celebration-image');
+            
+            // Create multiple fireworks at different positions
+            const fireworkPositions = [
+                { x: window.innerWidth * 0.2, y: window.innerHeight * 0.3 },
+                { x: window.innerWidth * 0.8, y: window.innerHeight * 0.3 },
+                { x: window.innerWidth * 0.5, y: window.innerHeight * 0.2 },
+                { x: window.innerWidth * 0.3, y: window.innerHeight * 0.6 },
+                { x: window.innerWidth * 0.7, y: window.innerHeight * 0.6 }
+            ];
+            
+            fireworkPositions.forEach((pos, index) => {
+                setTimeout(() => createFirework(pos.x, pos.y), index * 200);
+            });
+            
+            // Create sparkles
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createSparkle(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 50);
+            }
+            
+            // Create confetti rain
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => createConfetti(), i * 30);
+            }
+            
+            // Continue confetti for 5 seconds
+            const confettiInterval = setInterval(createConfetti, 100);
+            setTimeout(() => clearInterval(confettiInterval), 5000);
+        });
+    </script>
+</body>
+</html>
