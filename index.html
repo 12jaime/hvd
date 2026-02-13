@@ -67,9 +67,10 @@
         }
 
         .image-container {
-            margin: 30px 0;
+            margin: 20px 0;
             position: relative;
             display: none;
+            order: 2;
         }
 
         .image-container.show {
@@ -125,12 +126,13 @@
 
         .celebration {
             display: none;
-            margin-top: 30px;
+            flex-direction: column;
+            align-items: center;
         }
 
         .celebration.show {
-            display: block;
-            animation: fadeIn 0.5s ease, bounce 0.6s ease;
+            display: flex;
+            animation: fadeIn 0.5s ease;
         }
 
         @keyframes fadeIn {
@@ -158,6 +160,7 @@
             font-size: 2.5em;
             margin-bottom: 15px;
             animation: pulse 1s ease infinite;
+            order: 1;
         }
 
         @keyframes pulse {
@@ -172,13 +175,22 @@
         .celebration p {
             color: #666;
             font-size: 1.3em;
-            margin: 15px 0;
+            margin: 10px 0;
+            order: 3;
         }
 
         .emoji {
             font-size: 4em;
-            margin: 20px 0;
+            margin: 15px 0;
             animation: rotate 2s ease-in-out infinite;
+        }
+
+        .emoji.top {
+            order: 0;
+        }
+
+        .emoji.bottom {
+            order: 4;
         }
 
         @keyframes rotate {
@@ -277,16 +289,17 @@
         </div>
 
         <div id="celebrationSection" class="celebration">
-            <div class="emoji">🎉💕🎊</div>
+            <div class="emoji top">🎉💕🎊</div>
             <h2>YAAAAY! 🎉</h2>
-            <p>I'm so excited and happy!</p>
-            <p>This is the best day ever! 💖</p>
-            <div class="emoji">😍❤️✨</div>
             
             <div class="image-container" id="imageContainer">
                 <!-- Replace 'your-image.jpg' with your actual image filename -->
                 <img id="valentineImage" src="your-image.png" alt="Valentine's photo">
             </div>
+            
+            <p>I'm so excited and happy!</p>
+            <p>This is the best day ever! 💖</p>
+            <div class="emoji bottom">😍❤️✨</div>
         </div>
     </div>
 
