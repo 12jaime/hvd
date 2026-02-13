@@ -69,6 +69,11 @@
         .image-container {
             margin: 30px 0;
             position: relative;
+            display: none;
+        }
+
+        .image-container.show {
+            display: block;
         }
 
         #valentineImage {
@@ -263,11 +268,6 @@
 
     <div class="container">
         <h1>Will You Be My Valentine? 💝</h1>
-        
-        <div class="image-container">
-            <!-- Replace 'your-image.jpg' with your actual image filename -->
-            <img id="valentineImage" src="your-image.jpg" alt="Valentine's photo">
-        </div>
 
         <div id="questionSection">
             <div class="button-container">
@@ -282,6 +282,11 @@
             <p>I'm so excited and happy!</p>
             <p>This is the best day ever! 💖</p>
             <div class="emoji">😍❤️✨</div>
+            
+            <div class="image-container" id="imageContainer">
+                <!-- Replace 'your-image.jpg' with your actual image filename -->
+                <img id="valentineImage" src="your-image.jpg" alt="Valentine's photo">
+            </div>
         </div>
     </div>
 
@@ -290,6 +295,7 @@
         const yesBtn = document.getElementById('yesBtn');
         const questionSection = document.getElementById('questionSection');
         const celebrationSection = document.getElementById('celebrationSection');
+        const imageContainer = document.getElementById('imageContainer');
         const valentineImage = document.getElementById('valentineImage');
 
         // Function to move No button away from cursor
@@ -407,7 +413,12 @@
             
             questionSection.style.display = 'none';
             celebrationSection.classList.add('show');
-            valentineImage.classList.add('celebration-image');
+            
+            // Show image after a short delay
+            setTimeout(() => {
+                imageContainer.classList.add('show');
+                valentineImage.classList.add('celebration-image');
+            }, 800);
             
             // Create multiple fireworks at different positions
             const fireworkPositions = [
