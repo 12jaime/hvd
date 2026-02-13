@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine? 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffc3d7 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts animation */
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff1744;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-container {
+            margin: 30px 0;
+            position: relative;
+        }
+
+        #valentineImage {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            position: relative;
+            min-height: 60px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #yesBtn {
+            background: #ff1744;
+            color: white;
+        }
+
+        #yesBtn:hover {
+            background: #c51162;
+            transform: scale(1.1);
+        }
+
+        #noBtn {
+            background: #e0e0e0;
+            color: #666;
+            position: relative;
+        }
+
+        .celebration {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .celebration.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .celebration h2 {
+            color: #ff1744;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .celebration p {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts -->
+    <div class="heart" style="left: 10%; animation-delay: 0s;">💖</div>
+    <div class="heart" style="left: 20%; animation-delay: 2s;">💕</div>
+    <div class="heart" style="left: 30%; animation-delay: 4s;">💗</div>
+    <div class="heart" style="left: 40%; animation-delay: 1s;">💓</div>
+    <div class="heart" style="left: 50%; animation-delay: 3s;">💖</div>
+    <div class="heart" style="left: 60%; animation-delay: 5s;">💕</div>
+    <div class="heart" style="left: 70%; animation-delay: 2.5s;">💗</div>
+    <div class="heart" style="left: 80%; animation-delay: 4.5s;">💓</div>
+    <div class="heart" style="left: 90%; animation-delay: 1.5s;">💖</div>
+
+    <div class="container">
+        <h1>Will You Be My Valentine? 💝</h1>
+        
+        <div class="image-container">
+            <!-- Replace 'your-image.jpg' with your actual image filename -->
+            <img id="valentineImage" src="your-image.jpg" alt="Valentine's photo">
+        </div>
+
+        <div id="questionSection">
+            <div class="button-container">
+                <button id="yesBtn" class="btn">Yes! 💕</button>
+                <button id="noBtn" class="btn">No</button>
+            </div>
+        </div>
+
+        <div id="celebrationSection" class="celebration">
+            <div class="emoji">🎉💕🎊</div>
+            <h2>Yay! You said Yes!</h2>
+            <p>I'm so happy! 💖</p>
+            <div class="emoji">😊❤️😍</div>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionSection = document.getElementById('questionSection');
+        const celebrationSection = document.getElementById('celebrationSection');
+
+        // Move "No" button on hover
+        noBtn.addEventListener('mouseenter', function() {
+            const container = document.querySelector('.button-container');
+            const containerRect = container.getBoundingClientRect();
+            
+            // Get random position within a reasonable range
+            const maxX = window.innerWidth - 200;
+            const maxY = window.innerHeight - 100;
+            
+            const randomX = Math.random() * (maxX - 100) + 50;
+            const randomY = Math.random() * (maxY - 100) + 50;
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        });
+
+        // Handle "Yes" click
+        yesBtn.addEventListener('click', func
